@@ -80,18 +80,18 @@ The `getRandomWord()` function generates a random index within the range of the 
 ##### Breaking down the `getRandomWord()` for deeper understanding
 
 1. What `Math.random()` does?
-`Math.random() generates a random decimal number between 0 and 1.
-The result will be a number like 0.46 or 0.89.`
+> `Math.random()` generates a random decimal number between 0 and 1.
+> The result will be a number like 0.46 or 0.89.
 2. What `Math.random() * wordBank.length` does?
-`Multiplies the random decimal number by the length of wordBank.
-This scales the random number to the range between 0 and the length of wordBank.
-For example, if wordBank has 10 words, the result will be a number like 4.6 or 8.9`
+> Multiplies the random decimal number by the length of wordBank.
+> This scales the random number to the range between 0 and the length of wordBank.
+> For example, if wordBank has 10 words, the result will be a number like 4.6 or 8.9
 3. What `Math.floor()` does?
-`Takes the result from step 2 and rounds it down to the nearest whole number (integer).
-In our example, the numbers 4.6 and 8.9 would become 4 and 8.
-This gives us a valid index to access an item in the wordBank array.`
+> Takes the result from step 2 and rounds it down to the nearest whole number (integer).
+> In our example, the numbers 4.6 and 8.9 would become 4 and 8.
+> This gives us a valid index to access an item in the wordBank array.`
 4. We do this inside the wordBank[array] and as a result this returns a random index number of the array.
- We can visualize the result like this: wordBank[2]
+ > We can visualize the result like this: wordBank[2]
 
  Now we can create a variable inside the loop and call this function to equal it to a random word like this:
 
