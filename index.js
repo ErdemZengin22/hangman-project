@@ -1,6 +1,6 @@
 /*
 Game starts by importing two modules: "prompt" from "readline-sync" and "wordBank" from "./word-bank.js".
-The "prompt" module helps the program to get user input, and "wordBank" is a list of words that the program uses for the game.
+The "prompt" module gets user input, and "wordBank" is a list of words that the game uses for the game.
 */
 import prompt from "readline-sync";
 import wordBank from "./word-bank.js";
