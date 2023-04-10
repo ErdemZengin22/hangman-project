@@ -38,7 +38,7 @@ import prompt from "readline-sync";
 import wordBank from "./word-bank.js";
 Pick a random word from wordBank
 Set the guess limit to 6
-While the word has not been guessed {
+While the word has not been guessed and player still have guesses {
   Show the player their current progress
   Show the player their remaining guesses
   Get a guess from the player
@@ -118,4 +118,171 @@ function hangMan(){
 ```
 ### Turning our random words letters into underscores '_'
 
-Coming soon
+Now we need to hide the letters of our chosen word and show underscores instead of actual letters. We need to overwrite every letter with _
+
+For this we can do something like this
+```javascript
+const progress = Array(word.length).fill('_');
+```
+##### How this code works?
+
+1. Array(word.length):
+> This creates a new array with a length equal to the length of the variable word.
+> If word is "hello", the array will have a length of 5.
+2. fill() Method:
+> This method fills the entire array created in the previous step with the specified value,
+> which is an underscore '_' in this case. The result is an array with the same length as word,
+> but all elements are underscores.
+3. `const progress = Array(word.length).fill('_');`:
+> This whole line of code makes the `progress` variable as an array with the same length as word,
+> filled with underscores. This array represents the player's progress in the game,
+> showing which letters have been guessed correctly and which are still unknown.
+
+For example if our word is "hello", the `progress` array would be like this:
+```javascript
+["_", "_", "_", "_", "_"]
+```
+Later in the game when the player guesses are correct, we will change them with the correct letters like this:
+
+```javascript
+["h", "_", "l", "_", "o"]
+```
+Now each time our game starts, our `hangMan()` function will set a random word and change the letters into underscores:
+
+Current status of the game is like this:
+```javascript
+import prompt from "readline-sync";
+import wordBank from "./word-bank.js";
+function getRandomWord() {
+  return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+function hangMan(){
+  const word = getRandomWord();
+  const progress = Array(word.length).fill('_');
+ }
+```
+
+It is time to create our loop. This loop needs to run over and over until;
+1. Player is successfuly guessed all the letters
+and
+2. Player still have guess points.
+
+Lets add guess limit before starting the loop so we can make subtractions later
+
+```javascript
+let guesses = 6;
+//now player will have 6 lives
+```
+Current status of the game is like this:
+```javascript
+import prompt from "readline-sync";
+import wordBank from "./word-bank.js";
+function getRandomWord() {
+  return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+function hangMan(){
+  const word = getRandomWord();
+  const progress = Array(word.length).fill('_');
+  let guesses = 6;
+ }
+```
+### Creating the game loop
+
+How do we now what kind of loop we need to use? We can go deep in this topic but I will summarize what I've learned from the web:
+1. for loop:
+> is used when you know the exact number of iterations required. It consists of three parts: the initialization, the condition, and the increment/> decrement.
+```javascript
+for (let i = 0; i < count; i++) {
+  // Code to execute
+}
+```
+2. while loop:
+> is used when you don't know the number of iterations in advance but have a condition that must be met.
+```javascript
+let i = 0;
+while (i < count) {
+  // Code to execute
+  i++;
+}
+```
+3. do...while loop:
+> is similar to a while loop but executes a code block at least once, even if the condition is false from the beginning.
+```javascript
+let i = 0;
+do {
+  // Code to execute
+  i++;
+} while (i < count);
+```
+4. for...in loop:
+> is used to iterate over the properties of an object. This is not recommended for iterating over arrays.
+```javascript
+const obj = { a: 1, b: 2, c: 3 };
+for (const key in obj) {
+  if (obj.hasOwnProperty(key)) {
+    // Code to execute using obj[key]
+  }
+}
+```
+5. for...of loop:
+> is used to iterate over iterable objects, such as arrays, strings, or sets.
+```javascript
+const array = [1, 2, 3];
+for (const value of array) {
+  // Code to execute using value
+}
+```
+
+Since we don't know how many times we need to run our codes (the word might be 12 letters or 3 letters long, and also we don't know how many times the player will make a wrong guess etc.) we need to go with `while` loop.
+
+Now we are gonna tell the program "While the word has not been guessed, and player still have guesses, do this"
+
+For the condition part "has not been guessed" we need a function that compares the user progress and the word to see if they are equal.
+
+```javascript
+function hasWordBeenGuessed(word, progress) {
+  return word === progress.join('');
+}
+```
+##### How this `hasWordBeenGuessed()` function works?
+
+As we can remember we separated our chosen word into array of letters before to show them as underscores. Later in the game we need to display this underscores with the spaces between like "_ _ _ _" to make them visualy countable. So here `progress.join('');` we are joinin the array and then we check if they are equal or not.
+
+So `hasWordBeenGuessed()` function checks if the player has guessed the entire chosen word by comparing the original word with the joined version of the player's progress array. If the two strings are equal, the function returns `true`, indicating that the word has been guessed; otherwise, it returns `false`.
+
+Now we can use our callback function in our condition:
+```javascript
+while (!hasWordBeenGuessed(word, progress) && guesses > 0){}
+```
+##### How this condition works?
+
+1. `!hasWordBeenGuessed(word, progress)`:
+> This part of the condition checks if the player has not yet guessed the word correctly.
+> The ! symbol negates the result of the hasWordBeenGuessed function.
+> If hasWordBeenGuessed returns true (meaning the word has been guessed), the ! symbol changes it to false, causing the loop to exit.
+2. `guesses > 0`:
+> This part of the condition checks if the player still has guesses remaining. As long as the guesses variable is greater than 0, this condition is true, and the
+> loop will continue.
+3. `&&`:
+> This logical operator, called "AND", connects the two conditions. Both conditions must be true for the entire expression to be true.
+> If either of the conditions is false, the loop will exit.
+
+So far our game looks like this:
+```javascript
+import prompt from "readline-sync";
+import wordBank from "./word-bank.js";
+function getRandomWord() {
+  return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+function hasWordBeenGuessed(word, progress) {
+  return word === progress.join('');
+}
+function hangMan(){
+  const word = getRandomWord();
+  const progress = Array(word.length).fill('_');
+  let guesses = 6;
+  while (!hasWordBeenGuessed(word, progress) && guesses > 0) {
+    
+  }
+ }
+```
