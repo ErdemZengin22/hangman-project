@@ -43,12 +43,10 @@ While the word has not been guessed and player still have guesses {
   Show the player their remaining guesses
   Get a guess from the player
 
-If the player wants to quit the game {
-  Quit the game
-} Else if the guess is not a single letter {
-  Tell the player to pick a single letter
+If the player enters same letter {
+  ask the player to guess again
 } Else {
-If the guesses letter is in the word{
+If the guessed letter is in the word{
   update the player's progress with the guess
     }
   }
@@ -429,6 +427,181 @@ function hangMan(){
 Now the game will end after this loop. The while loop will break either if the word has been guessed or if the player loses.
 What we need to do is to check why this loop is break, why the game ended? 
 
-Is it because of a win or defeat? We need to ask this with conditions.
+Is it because of a win or loss? We need to ask this with conditions.
 
 ### The End Game
+
+We have 2 possibilities. Win (`true`) or Loss (`false`). If the progress is a Win (`true`) we will congratulate the player and display the wins and losses up until this point.
+
+```javascript
+if (hasWordBeenGuessed(word, progress)) {
+    console.log(`\n**********\nCongratulations! You've guessed the word: ${word}`);
+    wins++;
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+  } else {
+    console.log(`\n\nUh-oh! You run out of your guesses. The word was: ${word}`);
+    losses++;
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+  }
+```
+1. `if (hasWordBeenGuessed(word, progress))`:
+> In the first line we check what the `hasWordBeenGuessed()` function returns. If the `word` and `progress` are equal to each other this functions returns `True`
+> (win). Inside the `{}` we tell the program what to do when this condition is True.
+
+2. `wins++;`:
+> If the condition is `True`, this line increments the wins variable by 1, increasing the player's win count.
+
+3. `else{}`:
+> We display the opposite and increment the losses variable by 1, the losses count.
+
+We need to store the win and loss counts outside of the game loop. Because everytime when player starts a new game, it means the program will restart the `hangMan()` function. In order this to work correctly, wins and loss counts should not reset.
+
+So we will put these new variables on top of our code.
+```javascript
+let wins = 0;
+let losses = 0;
+```
+
+And now our game look like this:
+```javascript
+import prompt from "readline-sync";
+import wordBank from "./word-bank.js";
+let wins = 0;
+let losses = 0;
+function getRandomWord() {
+  return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+function hasWordBeenGuessed(word, progress) {
+  return word === progress.join('');
+}
+function updateProgress(word, progress, letter) {
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === letter) {
+      progress[i] = letter;
+    }
+  }
+}
+function hangMan(){
+  const word = getRandomWord();
+  const progress = Array(word.length).fill('_');
+  let guesses = 6;
+  while (!hasWordBeenGuessed(word, progress) && guesses > 0) {
+    console.log(`\n\nCurrent progress: ${progress.join(' ')}`);
+    console.log(`You have ${guesses} guesses left.`); 
+    const guess = prompt.question("Press CTRL + C to shutdown\nEnter your guess and hit Enter: ");
+    if (progress.includes(guess)) {
+      console.log(`**You already guessed the letter '${guess}'. Please guess another.`);
+    }else {
+      const letter = guess.toLowerCase();
+      if (word.includes(letter)) {
+        updateProgress(word, progress, letter);
+      }
+      else {
+        guesses--;
+      }
+    }
+  }
+  if (hasWordBeenGuessed(word, progress)) {
+    console.log(`\n**********\nCongratulations! You've guessed the word: ${word}`);
+    wins++;
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+  } else {
+    console.log(`\n\nUh-oh! You run out of your guesses. The word was: ${word}`);
+    losses++;
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+  }
+ }
+```
+### Final Part
+
+Now the game is over. But we need to ask if the player wants to play again. If the answer is yes, we will restart the game. Means we will pick another random word, calculate the letter count, turn them into underscores etc. What we need to do? We need to restart the `hangMan()` function because all of this is happening inside of it.
+
+
+First the question:
+```javascript
+const playAgain = prompt.question("\nWould you like to play again? (y/n): ");
+```
+Y = `True`
+N = `False`
+
+```javascript
+if (playAgain.toLowerCase() === 'y') {
+    hangMan();
+  }
+```
+1. `if (playAgain.toLowerCase() === 'y')`
+> We check if the value of the `playAgain` variable is equal to the lowercase letter 'y'. If the condition is `True`, the code inside calls the `hangMan()` function, which starts a new round of the Hangman game. 
+
+```javascript
+else {
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+    console.log("Thanks for playing!");
+  }
+```
+
+2. `else{}`
+> If the answer was not Y(`True`), we will display final wins and losses and say our goodbyes.
+
+### Final Game Code
+
+Finally, here is our finished hangman game code:
+```javascript
+import prompt from "readline-sync";
+import wordBank from "./word-bank.js";
+let wins = 0;
+let losses = 0;
+function getRandomWord() {
+  return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+function hasWordBeenGuessed(word, progress) {
+  return word === progress.join('');
+}
+function updateProgress(word, progress, letter) {
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === letter) {
+      progress[i] = letter;
+    }
+  }
+}
+function hangMan(){
+  const word = getRandomWord();
+  const progress = Array(word.length).fill('_');
+  let guesses = 6;
+  while (!hasWordBeenGuessed(word, progress) && guesses > 0) {
+    console.log(`\n\nCurrent progress: ${progress.join(' ')}`);
+    console.log(`You have ${guesses} guesses left.`); 
+    const guess = prompt.question("Press CTRL + C to shutdown\nEnter your guess and hit Enter: ");
+    if (progress.includes(guess)) {
+      console.log(`**You already guessed the letter '${guess}'. Please guess another.`);
+    }else {
+      const letter = guess.toLowerCase();
+      if (word.includes(letter)) {
+        updateProgress(word, progress, letter);
+      }
+      else {
+        guesses--;
+      }
+    }
+  }
+  if (hasWordBeenGuessed(word, progress)) {
+    console.log(`\n**********\nCongratulations! You've guessed the word: ${word}`);
+    wins++;
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+  } else {
+    console.log(`\n\nUh-oh! You run out of your guesses. The word was: ${word}`);
+    losses++;
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+  }
+  const playAgain = prompt.question("\nWould you like to play again? (y/n): ");
+  if (playAgain.toLowerCase() === 'y') {
+    hangMan();
+  } else {
+    console.log(`\nWins: ${wins}\nLosses: ${losses}\n`);
+    console.log("Thanks for playing!");
+  }
+ }
+ hangMan();
+```
+Now all we need to do is to call our `hangMan();` function at the end of the code to run the game.
+
+
