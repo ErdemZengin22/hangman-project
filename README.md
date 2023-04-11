@@ -610,4 +610,5 @@ function hangMan(){
 ```
 Now all we need to do is to call our `hangMan();` function at the end of the code to run the game.
 
+Thank you for reading :) 
 
