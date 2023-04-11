@@ -13,6 +13,12 @@ More updates and details are coming to this file soon...
 
 The aim of the project is to code a very simple text-based hangman game that can be played in the terminal using only JavaScript.
 
+## How To Run The Game?
+
+You need to run this game on your terminal. Get a clone of this repository and do `npm install`.
+
+You should be able to run the code with `node .` command.
+
 ## What do do first?
 
 In order to program our game, first thing we need to know is what our program will do? What are the steps of the game and how to structure this game?
