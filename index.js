@@ -41,12 +41,10 @@ function hangMan() {
     /*Asking player to input their guess*/
     const guess = prompt.question("Press CTRL + C to shutdown\nEnter your guess and hit Enter: ");
 
-    /*If they enter more than one letter, they are prompted to enter a single letter.*/
-    if (guess.length !== 1) {
-      console.log("Please enter a SINGLE letter.");
-    }
-    /*If the player guesses a correct letter, the "updateProgress()" function is called to update their progress.*/
-    else {
+    /*If the player enters the same letter, they are prompted to enter another letter.*/
+    if (progress.includes(guess)) {
+      console.log(`**You already guessed the letter '${guess}'. Please guess another.`);
+    }else {/*If the player guesses a correct letter, the "updateProgress()" function is called to update their progress.*/
       const letter = guess.toLowerCase();
       if (word.includes(letter)) {
         updateProgress(word, progress, letter);

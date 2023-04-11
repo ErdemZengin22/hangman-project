@@ -126,10 +126,10 @@ const progress = Array(word.length).fill('_');
 ```
 ##### How this code works?
 
-1. Array(word.length):
+1. `Array(word.length)`:
 > This creates a new array with a length equal to the length of the variable word.
 > If word is "hello", the array will have a length of 5.
-2. fill() Method:
+2. `fill()` Method:
 > This method fills the entire array created in the previous step with the specified value,
 > which is an underscore '_' in this case. The result is an array with the same length as word,
 > but all elements are underscores.
@@ -190,7 +190,7 @@ function hangMan(){
 
 How do we now what kind of loop we need to use? We can go deep in this topic but I will summarize what I've learned from the web:
 1. for loop:
-> is used when you know the exact number of iterations required. It consists of three parts: the initialization, the condition, and the increment/> decrement.
+> is used when you know the exact number of iterations required. It consists of three parts: the initialization, the condition, and the increment or decrement.
 ```javascript
 for (let i = 0; i < count; i++) {
   // Code to execute
@@ -282,7 +282,153 @@ function hangMan(){
   const progress = Array(word.length).fill('_');
   let guesses = 6;
   while (!hasWordBeenGuessed(word, progress) && guesses > 0) {
-    
+
   }
  }
 ```
+Inside our loop we need to update game progress and show the player current status of the game. So lets do that.
+
+```javascript
+console.log(`\n\nCurrent progress: ${progress.join(' ')}`);
+console.log(`You have ${guesses} guesses left.`);
+```
+First log will display two empty lines on top for readability and show current progress by joining the array with space between them. Like this:
+`Current progress: _ e _ _ _`
+
+Second log will display guess count.
+
+Now we need to take players guess:
+
+```javascript
+const guess = prompt.question("Press CTRL + C to shutdown\nEnter your guess and hit Enter: ");
+```
+`prompt.question()`:
+> This question method is from the prompt module, which we imported from "readline-sync" at the beginning of the code.
+> The question method is used to get user input from the command line (terminal).
+> It displays the text provided as an argument (inside the parentheses) and waits for the user to type their input.
+
+So far our game looks like this:
+```javascript
+import prompt from "readline-sync";
+import wordBank from "./word-bank.js";
+function getRandomWord() {
+  return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+function hasWordBeenGuessed(word, progress) {
+  return word === progress.join('');
+}
+function hangMan(){
+  const word = getRandomWord();
+  const progress = Array(word.length).fill('_');
+  let guesses = 6;
+  while (!hasWordBeenGuessed(word, progress) && guesses > 0) {
+    console.log(`\n\nCurrent progress: ${progress.join(' ')}`);
+    console.log(`You have ${guesses} guesses left.`); 
+    const guess = prompt.question("Press CTRL + C to shutdown\nEnter your guess and hit Enter: ");
+  }
+ }
+```
+At this point player will make a guess and we need to make check if this is used in the game before or not. While coding this kinds of loops I learned that you need to think that this is done before, and will have previous loops data in hand.
+
+In english, user guessed a letter before. So this guess will be stored in players progress. We need to tell the program "if the guessed letter is already in the progress, do this". 
+
+```javascript
+if (progress.includes(guess)) {
+      console.log(`**You already guessed the letter '${guess}'. Please guess another.`);
+    }
+```
+This is self explanatory :)
+
+And now, if this guess is a new letter we need to check if its in the chosen word. In our word-bank.js our word are all lower case. So in order to check if the letter in the word or not we need `toLowerCase()` the guessed letter.
+
+After that we can check, and do something with the result, and save the progress.
+
+Including the if statement above, english should continue like this: "if the guessed letter is already in the progress, tell player to guess another. Else turn this letter to lower case and check if the word includes the letter, update the progress if guess is correct, remove 1 guess from guess limit".
+
+```javascript
+if (progress.includes(guess)) {
+      console.log(`**You already guessed the letter '${guess}'. Please guess another.`);
+    } else {
+      const letter = guess.toLowerCase();
+      if (word.includes(letter)) {
+        updateProgress(word, progress, letter);
+      }
+    }
+    else {
+        guesses--;
+      }
+```
+### Updating the Progress
+
+To update the progress we need to create a `updateProgress()` function. This function will need 3 parameters.
+1. Our randomly chosen word
+2. Progress itself (our progress is an array including words letters in correct index order)
+3. And the guessed letter to compare 
+
+```javascript
+function updateProgress(word, progress, letter) {
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === letter) {
+      progress[i] = letter;
+    }
+  }
+}
+```
+
+1. `if (word[i] === letter) {}`
+> This line checks if the character at the current position of 'i' in word is equal to the guessed letter.
+2. `progress[i] = letter;`
+> If the condition is true (meaning the character at position 'i' in word matches the guessed letter), this line updates the player's progress array. It sets the
+> element at position 'i' in the progress array to the guessed letter. This replaces the underscore at that position with the correct letter.
+
+I will try to explain better. Lets say our word is 'win'.
+
+This will have indexes of 'w','i','n' = '0','1','2'
+If the player guessed 'n'. It will start checking with index 0 like "Hello 0, do you have letter n?" if the answer is no, it will go to next door and say "Hello 1, do you have letter n?", and finally when it founds the n in '2' it will be like "Oh! Hey guys, n is in the 2!" and the progress will change its index '2' with n.
+
+With that, our game now looks like this:
+```javascript
+import prompt from "readline-sync";
+import wordBank from "./word-bank.js";
+function getRandomWord() {
+  return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+function hasWordBeenGuessed(word, progress) {
+  return word === progress.join('');
+}
+function updateProgress(word, progress, letter) {
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === letter) {
+      progress[i] = letter;
+    }
+  }
+}
+function hangMan(){
+  const word = getRandomWord();
+  const progress = Array(word.length).fill('_');
+  let guesses = 6;
+  while (!hasWordBeenGuessed(word, progress) && guesses > 0) {
+    console.log(`\n\nCurrent progress: ${progress.join(' ')}`);
+    console.log(`You have ${guesses} guesses left.`); 
+    const guess = prompt.question("Press CTRL + C to shutdown\nEnter your guess and hit Enter: ");
+    if (progress.includes(guess)) {
+      console.log(`**You already guessed the letter '${guess}'. Please guess another.`);
+    }else {
+      const letter = guess.toLowerCase();
+      if (word.includes(letter)) {
+        updateProgress(word, progress, letter);
+      }
+      else {
+        guesses--;
+      }
+    }
+  }
+ }
+```
+
+Now the game will end after this loop. The while loop will break either if the word has been guessed or if the player loses.
+What we need to do is to check why this loop is break, why the game ended? 
+
+Is it because of a win or defeat? We need to ask this with conditions.
+
+### The End Game
