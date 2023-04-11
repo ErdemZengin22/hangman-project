@@ -120,7 +120,7 @@ function hangMan(){
   const word = getRandomWord();
  }
 ```
-### Turning our random words letters into underscores '_'
+### Turning our random word's letters into underscores '_'
 
 Now we need to hide the letters of our chosen word and show underscores instead of actual letters. We need to overwrite every letter with _
 
@@ -192,16 +192,16 @@ function hangMan(){
 ```
 ### Creating the game loop
 
-How do we now what kind of loop we need to use? We can go deep in this topic but I will summarize what I've learned from the web:
+How do we now what kind of loop we need to use? We can go deep in this topic but I will summarize what I've learned:
 1. for loop:
-> is used when you know the exact number of iterations required. It consists of three parts: the initialization, the condition, and the increment or decrement.
+> is used when you know the exact number of iterations required.
 ```javascript
 for (let i = 0; i < count; i++) {
   // Code to execute
 }
 ```
 2. while loop:
-> is used when you don't know the number of iterations in advance but have a condition that must be met.
+> is used when you don't know the number of iterations in advance but have a condition that must be met ( like a game :) ).
 ```javascript
 let i = 0;
 while (i < count) {
