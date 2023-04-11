@@ -339,11 +339,11 @@ if (progress.includes(guess)) {
 ```
 This is self explanatory :)
 
-And now, if this guess is a new letter we need to check if its in the chosen word. In our word-bank.js our word are all lower case. So in order to check if the letter in the word or not we need `toLowerCase()` the guessed letter.
+And now, if this guess is a new letter we need to check if its in the chosen word. In our word-bank.js our word are all lower case. So in order to check if the letter in the word or not, we need `toLowerCase()` the guessed letter.
 
 After that we can check, and do something with the result, and save the progress.
 
-Including the if statement above, english should continue like this: "if the guessed letter is already in the progress, tell player to guess another. Else turn this letter to lower case and check if the word includes the letter, update the progress if guess is correct, remove 1 guess from guess limit".
+Including the if statement above, dialog should continue like this: "if the guessed letter is already in the progress, tell player to guess another. Else turn this letter to lower case and check if the word includes the letter, update the progress if guess is correct, if its not, remove 1 guess from guess limit".
 
 ```javascript
 if (progress.includes(guess)) {
