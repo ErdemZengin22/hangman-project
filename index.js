@@ -7,18 +7,18 @@ let wins = 0;
 let losses = 0;
 
 /*The "getRandomWord()" function selects a random word from the "wordBank" for the player to guess.*/
-function getRandomWord() {
+const getRandomWord = () => {
   return wordBank[Math.floor(Math.random() * wordBank.length)];
 }
 
 /*The "hasWordBeenGuessed()" function checks if the player has guessed the word correctly
 by comparing the original word to the player's current progress.*/
-function hasWordBeenGuessed(word, progress) {
+const hasWordBeenGuessed = (word, progress) => {
   return word === progress.join('');
 }
 
 /*The "updateProgress()" function updates the player's progress by replacing underscores with the correctly guessed letter.*/
-function updateProgress(word, progress, letter) {
+const updateProgress = (word, progress, letter) => {
   for (let i = 0; i < word.length; i++) {
     if (word[i] === letter) {
       progress[i] = letter;
